@@ -6,7 +6,7 @@ target
 .project
 .settings
 *.code-workspace
-config.json
-package.json
+token.json
+*package.json
 package-lock.json
 node_modules/*
