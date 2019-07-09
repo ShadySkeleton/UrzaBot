@@ -1,0 +1,12 @@
+**/.DS_Store
+*.iml
+.idea
+target
+.classpath
+.project
+.settings
+*.code-workspace
+config.json
+package.json
+package-lock.json
+node_modules/*
