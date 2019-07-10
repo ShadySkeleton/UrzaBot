@@ -18,14 +18,15 @@ var fetchEntry = function(cardCollection, cardEntry){
 exports.addCardEntry = function(cardCollection, cardEntry){
   var entry = fetchEntry(cardCollection, cardEntry);
 
-console.log('initial: ' + cardCollection.length);
-
   if(entry === cardEntry){
     //no match was found, has to be added to the collection
     cardCollection[cardCollection.length] = entry;
   } else {
     //match was found and has to be modified
-    entry.count += cardEntry.count;
+    var oldCountValue = parseInt(entry.count, 10);
+    var newCountValue = parseInt(cardEntry.count, 10);
+    entry.count = oldCountValue + newCountValue;
+
     if(cardEntry.descriptors != null && cardEntry.descriptors.length > 0){
       entry.descriptors = cardEntry.descriptors;
     }
@@ -41,8 +42,12 @@ exports.removeCardEntry = function(cardCollection, cardEntry){
   //match was found and has to be modified
   //otherwise, no match was found and therefore nothing can be removed
   if(entry !== cardEntry){
-    if(entry.count - cardEntry.count > 0){
-      entry.count -= cardEntry.count;
+    var oldCountValue = parseInt(entry.count, 10);
+    var newCountValue = parseInt(cardEntry.count, 10);
+
+    if(oldCountValue - newCountValue >= 0){
+      //entry.count = oldCountValue - newCountValue;
+      entry.count = oldCountValue - newCountValue;
     } else {
       cardCollection[cardCollection.indexOf(entry)] = null;
     }

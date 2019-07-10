@@ -1,6 +1,6 @@
-const Discord = require('discord.js');
-const Config = require('./config.json');
-const Token = require('./token.json');
+const Discord = require('discord.js')
+const Config = require('./config.json')
+const Token = require('./token.json')
 const CardEntry = require('./cardEntry')
 const WantsListManager = require('./wantsListManager')
 const UserInputParser = require('./userInputParser')
@@ -12,10 +12,10 @@ const client = new Discord.Client();
 //General Functions/////////////////////////////////////////////
 var findMessageByAuthor = function(channel, author){
   var result;
+  var authorName = author.username;
 
   channel.messages.forEach(function(message){
-      if(message.content.includes(author)){
-        console.log('Found one');
+      if(message.content.includes(authorName)){
         result = message;
       }
   });
@@ -42,13 +42,13 @@ var addWants = function(channel, author, content){
     });
   }
 
-  var newContent = BotFormatter.formatCardEntries(updatedCollection);
+  var newContent = BotFormatter.formatCardEntries(author, updatedCollection);
 
   //edit message
   if(hasPriorMessage){
     message.edit(newContent);
   } else{
-    channel.sendMessage(newContent);
+    channel.send(newContent);
   }
 }
 
@@ -74,7 +74,7 @@ client.on('ready', () => {
 
 client.on('message', msg => {
   var channel = msg.guild.channels.find(channel => channel.id === Config.channel_id);
-  var author = msg.author.username;
+  var author = msg.author;
 
   if(author === 'UrzaBot'){
     return;
@@ -94,6 +94,10 @@ client.on('message', msg => {
      } else if(contentArray[1] === 'removeAll'){
        removeAllWants(channel, author);
      }
+   }
+
+   if(author !== 'UrzaBot'){
+      //msg.delete();
    }
  });
 
