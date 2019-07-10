@@ -8,11 +8,8 @@ const BotFormatter = require('./botFormatter')
 
 const client = new Discord.Client();
 
-/////////////////////////////////////////////////////////////////
-//General Functions/////////////////////////////////////////////
-var findMessageByAuthor = function(channel, author){
+var findMessageByAuthor = function(channel, authorName){
   var result;
-  var authorName = author.username;
 
   channel.messages.forEach(function(message){
       if(message.content.includes(authorName)){
@@ -23,13 +20,10 @@ var findMessageByAuthor = function(channel, author){
   return result;
 }
 
-/////////////////////////////////////////////////////////////////
-//Want editing functions/////////////////////////////////////////
 var addWants = function(channel, author, content){
-  //use as title for embed
   var authorLine = 'Wants of ' + author;
 
-  var message = findMessageByAuthor(channel, author);
+  var message = findMessageByAuthor(channel, author.username);
   var hasPriorMessage = message != null;
 
   var updatedCollection = [];
@@ -53,16 +47,42 @@ var addWants = function(channel, author, content){
 }
 
 var removeWants = function(channel, author, content){
-//find message by author
-//find content line with same card name
-//get complete content, remove that line from string
-//edit message
+  var message = findMessageByAuthor(channel, author.username);
+  var hasPriorMessage = message != null;
+
+  var updatedCollection = [];
+  var existingCollection = hasPriorMessage ? BotFormatter.readFormattedCardEntries(message.content) : [];
+  var cardCollection = UserInputParser.readUserInput(content);
+
+  if(cardCollection != null && cardCollection.length > 0){
+    cardCollection.forEach(function(cardEntry){
+      updatedCollection = WantsListManager.removeCardEntry(existingCollection, cardEntry);
+    });
+  }
+
+  var newContent = BotFormatter.formatCardEntries(author, updatedCollection);
+
+  //edit message
+  if(hasPriorMessage){
+    message.edit(newContent);
+  } else{
+    channel.send(newContent);
+  }
 }
 
 var removeAllWants = function(channel, author){
-  var message = findMessageByAuthor(channel, author);
+  var message = findMessageByAuthor(channel, author.username);
   if(message != null){
     message.delete();
+  }
+}
+
+var fetchWantsList = function(channel, author, target){
+  var message = findMessageByAuthor(channel, target);
+  if(message != null){
+    author.sendMessage(message.content);
+  } else {
+    author.sendMessage('Sorry, but there were no wants for user ' + target)
   }
 }
 
@@ -73,6 +93,10 @@ client.on('ready', () => {
  });
 
 client.on('message', msg => {
+  if(msg.guild == null){
+    return;
+  }
+
   var channel = msg.guild.channels.find(channel => channel.id === Config.channel_id);
   var author = msg.author;
 
@@ -93,6 +117,8 @@ client.on('message', msg => {
        removeWants(channel, author, content.substring(13));
      } else if(contentArray[1] === 'removeAll'){
        removeAllWants(channel, author);
+     } else if(contentArray[1] === 'fetch'){
+       fetchWantsList(channel, author, content.substring(12));
      }
    }
 

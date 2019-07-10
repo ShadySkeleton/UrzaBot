@@ -45,7 +45,7 @@ exports.removeCardEntry = function(cardCollection, cardEntry){
     var oldCountValue = parseInt(entry.count, 10);
     var newCountValue = parseInt(cardEntry.count, 10);
 
-    if(oldCountValue - newCountValue >= 0){
+    if(oldCountValue - newCountValue > 0){
       //entry.count = oldCountValue - newCountValue;
       entry.count = oldCountValue - newCountValue;
     } else {
