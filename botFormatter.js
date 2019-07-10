@@ -28,18 +28,22 @@ var padContent = function(value, paddedLength){
 
 //expects a collection of card entries and formats them accordingly
 exports.formatCardEntries = function(cardEntries){
-  var content;
+  console.log(cardEntries.length);
+  var content = '';
 
-  content += Config.left_upper_corner + lineCharacters(82) + Config.right_upper_corner + lineSeparator;
+  content += Config.left_upper_corner + lineCharacters(57) + Config.right_upper_corner + lineSeparator;
 
   cardEntries.forEach(function(cardEntry){
     if(cardEntry != null){
-      content += Config.left_border + padContent(cardEntry.count, 10) + Config.separator + padContent(cardEntry.name, 40) + Config.separator + padContent(cardEntry.descriptors, 30) + Config.right_border + lineSeparator;
-      content += Config.left_border + lineCharacters(82) + Config.right_border + lineSeparator;
+      content += Config.left_border + padContent(cardEntry.count, 5) + Config.separator + padContent(cardEntry.name, 30) + Config.separator + padContent(cardEntry.descriptors, 20) + Config.right_border + lineSeparator;
+
+      if(cardEntries.indexOf(cardEntry) < cardEntries.length - 1){
+        content += Config.left_border + lineCharacters(57) + Config.right_border + lineSeparator;
+      }
     }
   });
 
-  content += Config.left_lower_corner + lineCharacters(82) + Config.right_lower_corner;
+  content += Config.left_lower_corner + lineCharacters(57) + Config.right_lower_corner;
   return content;
 }
 
@@ -61,7 +65,7 @@ exports.readFormattedCardEntries = function(messageContent){
   var result = [];
   var index = 0;
   var lines = messageContent.split(lineSeparator);
-  if(lines != null && lines.size > 1){
+  if(lines != null && lines.length > 1){
     lines.forEach(function(line){
       if(line.includes(Config.separator)){
         result[index++] = parseLineToCardEntry(line);

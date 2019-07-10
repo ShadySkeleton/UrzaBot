@@ -17,6 +17,7 @@ var parseToCardEntries = function(messageContent){
 
   var index = 0;
   values.forEach(function(value){
+    var part = parseToCardEntry(value);
     result[index++] = parseToCardEntry(value);
   });
 
@@ -24,6 +25,6 @@ var parseToCardEntries = function(messageContent){
 }
 
 //reads the user input that contains the original card entries
-exports.readRawCardEntries = function(messageContent){
+exports.readUserInput = function(messageContent){
   return parseToCardEntries(messageContent);
 }
