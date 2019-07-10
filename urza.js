@@ -1,23 +1,18 @@
-const Discord = require('discord.js');
+const Discord = require('discord.js')
+const Config = require('./config.json')
+const Token = require('./token.json')
+const CardEntry = require('./cardEntry')
+const WantsListManager = require('./wantsListManager')
+const UserInputParser = require('./userInputParser')
+const BotFormatter = require('./botFormatter')
+
 const client = new Discord.Client();
-const CONFIG = require('./config.json');
-const TOKEN = require('./token.json');
 
-//CardEntry Construct
-function CardEntry(count, name, descriptors){
-  this.count = count;
-  this.name = name;
-  this.descriptors = descriptors;
-}
-
-/////////////////////////////////////////////////////////////////
-//General Functions/////////////////////////////////////////////
-var findMessageByAuthor = function(channel, author){
+var findMessageByAuthor = function(channel, authorName){
   var result;
 
   channel.messages.forEach(function(message){
-      if(message.content.includes(author)){
-        console.log('Found one');
+      if(message.content.includes(authorName)){
         result = message;
       }
   });
@@ -25,77 +20,69 @@ var findMessageByAuthor = function(channel, author){
   return result;
 }
 
-//parse each card by splitting again on "|" character
-var parseToCardEntry = function(rawLine){
-  var values = rawLine.split("|");
-  var count = values[0] === null ? '' : values[0].trim();
-  var name = values[1] === null ? '' : values[1].trim();
-  var descriptors = values[2] === null ? '' : values[2].trim();
-
-  return new CardEntry(count, name, descriptors);
-}
-
-//Split the content without the bot command into individual pieces and parse them each
-var parseToCardEntries = function(completeContent){
-  var result = [];
-  var values = completeContent.split("||");
-
-  var index = 0;
-  values.forEach(function(value){
-    result[index++] = parseToCardEntry(value);
-  });
-
-  return result;
-}
-
-//formats text to string
-var formatCardEntry = function(cardEntry){
-  return cardEntry.count + 'x ' + cardEntry.name + ' (' + cardEntry.descriptors + ')'
-}
-
-/////////////////////////////////////////////////////////////////
-//Want editing functions/////////////////////////////////////////
 var addWants = function(channel, author, content){
-  //find message for correct author
-  //if no author, add additional line "Wants for "
-  var newContent;
-  var hasPriorMessage;
-  var message = findMessageByAuthor(channel, author);
-  if(typeof message === "undefined"){
-    newContent = 'Wants of ' + author;
-    hasPriorMessage = false;
-  } else {
-    newContent = message.content;
-    hasPriorMessage = true;
+  var authorLine = 'Wants of ' + author;
+
+  var message = findMessageByAuthor(channel, author.username);
+  var hasPriorMessage = message != null;
+
+  var updatedCollection = [];
+  var existingCollection = hasPriorMessage ? BotFormatter.readFormattedCardEntries(message.content) : [];
+  var cardCollection = UserInputParser.readUserInput(content);
+
+  if(cardCollection != null && cardCollection.length > 0){
+    cardCollection.forEach(function(cardEntry){
+      updatedCollection = WantsListManager.addCardEntry(existingCollection, cardEntry);
+    });
   }
 
-  //parse content to cards
-  //get message content, add cards content
-  var cardEntries = parseToCardEntries(content);
-  cardEntries.forEach(function(entry){
-    console.log(formatCardEntry(entry));
-    newContent += '\r\n' + formatCardEntry(entry);
-  });
+  var newContent = BotFormatter.formatCardEntries(author, updatedCollection);
 
   //edit message
   if(hasPriorMessage){
     message.edit(newContent);
   } else{
-    channel.sendMessage(newContent);
+    channel.send(newContent);
   }
 }
 
 var removeWants = function(channel, author, content){
-//find message by author
-//find content line with same card name
-//get complete content, remove that line from string
-//edit message
+  var message = findMessageByAuthor(channel, author.username);
+  var hasPriorMessage = message != null;
+
+  var updatedCollection = [];
+  var existingCollection = hasPriorMessage ? BotFormatter.readFormattedCardEntries(message.content) : [];
+  var cardCollection = UserInputParser.readUserInput(content);
+
+  if(cardCollection != null && cardCollection.length > 0){
+    cardCollection.forEach(function(cardEntry){
+      updatedCollection = WantsListManager.removeCardEntry(existingCollection, cardEntry);
+    });
+  }
+
+  var newContent = BotFormatter.formatCardEntries(author, updatedCollection);
+
+  //edit message
+  if(hasPriorMessage){
+    message.edit(newContent);
+  } else{
+    channel.send(newContent);
+  }
 }
 
 var removeAllWants = function(channel, author){
-  var message = findMessageByAuthor(channel, author);
+  var message = findMessageByAuthor(channel, author.username);
   if(message != null){
     message.delete();
+  }
+}
+
+var fetchWantsList = function(channel, author, target){
+  var message = findMessageByAuthor(channel, target);
+  if(message != null){
+    author.sendMessage(message.content);
+  } else {
+    author.sendMessage('Sorry, but there were no wants for user ' + target)
   }
 }
 
@@ -106,18 +93,18 @@ client.on('ready', () => {
  });
 
 client.on('message', msg => {
-  var channel = msg.guild.channels.find(channel => channel.id === CONFIG.channel_id);
-  var author = msg.author.username;
+  if(msg.guild == null){
+    return;
+  }
+
+  var channel = msg.guild.channels.find(channel => channel.id === Config.channel_id);
+  var author = msg.author;
 
   if(author === 'UrzaBot'){
     return;
   }
 
   //channel.bulkDelete(100);
-  //if(author === 'ShadySkeleton'){
-    //msg.reply(channel.type);
-    //msg.reply(channel.lastMessage.content);
-  //}
 
   var content = msg.content;
   var contentArray = content.split(" ");
@@ -130,8 +117,14 @@ client.on('message', msg => {
        removeWants(channel, author, content.substring(13));
      } else if(contentArray[1] === 'removeAll'){
        removeAllWants(channel, author);
+     } else if(contentArray[1] === 'fetch'){
+       fetchWantsList(channel, author, content.substring(12));
      }
+   }
+
+   if(author !== 'UrzaBot'){
+      //msg.delete();
    }
  });
 
-client.login(TOKEN.tokenId);
+client.login(Token.tokenId);
