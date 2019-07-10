@@ -1,14 +1,9 @@
 const Discord = require('discord.js');
-const client = new Discord.Client();
-const CONFIG = require('./config.json');
-const TOKEN = require('./token.json');
+const Config = require('./config.json');
+const Token = require('./token.json');
+const CardEntry = require('./cardEntry')
 
-//CardEntry Construct
-function CardEntry(count, name, descriptors){
-  this.count = count;
-  this.name = name;
-  this.descriptors = descriptors;
-}
+const client = new Discord.Client();
 
 /////////////////////////////////////////////////////////////////
 //General Functions/////////////////////////////////////////////
@@ -32,7 +27,7 @@ var parseToCardEntry = function(rawLine){
   var name = values[1] === null ? '' : values[1].trim();
   var descriptors = values[2] === null ? '' : values[2].trim();
 
-  return new CardEntry(count, name, descriptors);
+  return CardEntry.create(count, name, descriptors);
 }
 
 //Split the content without the bot command into individual pieces and parse them each
@@ -106,7 +101,7 @@ client.on('ready', () => {
  });
 
 client.on('message', msg => {
-  var channel = msg.guild.channels.find(channel => channel.id === CONFIG.channel_id);
+  var channel = msg.guild.channels.find(channel => channel.id === Config.channel_id);
   var author = msg.author.username;
 
   if(author === 'UrzaBot'){
@@ -134,4 +129,4 @@ client.on('message', msg => {
    }
  });
 
-client.login(TOKEN.tokenId);
+client.login(Token.tokenId);

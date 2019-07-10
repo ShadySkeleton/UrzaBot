@@ -1,5 +1,11 @@
 {
   "channel_id": "598161841897734175",
-  "value_separator": "|",
-  "item_separator": "||"
+  "left_upper_corner": "╔",
+  "left_border": "╠",
+  "left_lower_corner": "╚",
+  "line": "═",
+  "separator": "╬",
+  "right_upper_corner": "╗",
+  "right_border": "╣",
+  "right_lower_corner": "╝"
 }
