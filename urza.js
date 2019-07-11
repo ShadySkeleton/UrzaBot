@@ -70,7 +70,7 @@ client.on('message', msg => {
     return;
   }
 
-  var channel = msg.guild.channels.find(channel => channel.id === Config.channel_id);
+  var channel = msg.guild.channels.find(channel => channel.id === process.env.channel_id);
   var authorName = msg.member.displayName;
 
   //channel.bulkDelete(100);
@@ -89,9 +89,9 @@ client.on('message', msg => {
      } else if(contentArray[1] === 'fetch'){
        fetchWantsList(channel, msg.author, content.substring(12));
      }
-   }
 
-   msg.delete();
+    msg.delete();
+   }
  });
 
 client.login(process.env.Token);
