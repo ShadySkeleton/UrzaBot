@@ -8,11 +8,11 @@ const BotFormatter = require('./botFormatter')
 
 const client = new Discord.Client();
 
-var findMessageByAuthor = function(channel, authorName){
+var findMessageByAuthor = function(channel, username){
   var result;
 
   channel.messages.forEach(function(message){
-      if(message.content.includes(authorName)){
+      if(message.content.includes(username)){
         result = message;
       }
   });
@@ -20,10 +20,8 @@ var findMessageByAuthor = function(channel, authorName){
   return result;
 }
 
-var addWants = function(channel, author, content){
-  var authorLine = 'Wants of ' + author;
-
-  var message = findMessageByAuthor(channel, author.username);
+var addWants = function(channel, username, content){
+  var message = findMessageByAuthor(channel, username);
   var hasPriorMessage = message != null;
 
   var updatedCollection = [];
@@ -36,7 +34,7 @@ var addWants = function(channel, author, content){
     });
   }
 
-  var newContent = BotFormatter.formatCardEntries(author, updatedCollection);
+  var newContent = BotFormatter.formatCardEntries(username, updatedCollection);
 
   //edit message
   if(hasPriorMessage){
@@ -46,8 +44,8 @@ var addWants = function(channel, author, content){
   }
 }
 
-var removeWants = function(channel, author, content){
-  var message = findMessageByAuthor(channel, author.username);
+var removeWants = function(channel, username, content){
+  var message = findMessageByAuthor(channel, username);
   var hasPriorMessage = message != null;
 
   var updatedCollection = [];
@@ -60,7 +58,7 @@ var removeWants = function(channel, author, content){
     });
   }
 
-  var newContent = BotFormatter.formatCardEntries(author, updatedCollection);
+  var newContent = BotFormatter.formatCardEntries(username, updatedCollection);
 
   //edit message
   if(hasPriorMessage){
@@ -70,8 +68,8 @@ var removeWants = function(channel, author, content){
   }
 }
 
-var removeAllWants = function(channel, author){
-  var message = findMessageByAuthor(channel, author.username);
+var removeAllWants = function(channel, username){
+  var message = findMessageByAuthor(channel, username);
   if(message != null){
     message.delete();
   }
@@ -98,9 +96,9 @@ client.on('message', msg => {
   }
 
   var channel = msg.guild.channels.find(channel => channel.id === Config.channel_id);
-  var author = msg.author;
+  var authorName = msg.member.displayName;
 
-  if(author === 'UrzaBot'){
+  if(msg.author.username == 'UrzaBot'){
     return;
   }
 
@@ -112,19 +110,17 @@ client.on('message', msg => {
 
     //remove first ten characters to cleanse bot command starter
      if(contentArray[1] === 'add'){
-        addWants(channel, author, content.substring(10));
+        addWants(channel, authorName, content.substring(10));
      } else if(contentArray[1] === 'remove'){
-       removeWants(channel, author, content.substring(13));
+       removeWants(channel, authorName, content.substring(13));
      } else if(contentArray[1] === 'removeAll'){
-       removeAllWants(channel, author);
+       removeAllWants(channel, authorName);
      } else if(contentArray[1] === 'fetch'){
-       fetchWantsList(channel, author, content.substring(12));
+       fetchWantsList(channel, msg.author, content.substring(12));
      }
    }
 
-   if(author !== 'UrzaBot'){
-      //msg.delete();
-   }
+   msg.delete();
  });
 
 client.login(Token.tokenId);

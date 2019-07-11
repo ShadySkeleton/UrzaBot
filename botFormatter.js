@@ -32,8 +32,8 @@ var padContent = function(value, paddedLength){
 }
 
 //expects a collection of card entries and formats them accordingly
-exports.formatCardEntries = function(author, cardEntries){
-  var content = '```Wants of ' + author.username + lineSeparator + lineSeparator;
+exports.formatCardEntries = function(username, cardEntries){
+  var content = '```Wants of ' + username + lineSeparator + lineSeparator;
 
   content += Config.left_upper_corner + lineCharacters(countLength) + Config.upper_intersection + lineCharacters(nameLength) + Config.upper_intersection + lineCharacters(descLength) + Config.right_upper_corner + lineSeparator;
   content += Config.left_border + padContent('Count', countLength) + Config.full_intersection + padContent('Card Name', nameLength) + Config.full_intersection + padContent('Card Descriptors', descLength) + Config.right_border + lineSeparator;

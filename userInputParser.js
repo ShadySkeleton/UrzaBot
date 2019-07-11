@@ -7,7 +7,13 @@ var parseToCardEntry = function(messageLine){
   var name = values[1] == null ? '' : values[1].trim();
   var descriptors = values[2] == null ? '' : values[2].trim();
 
-  return CardEntry.create(count, name, descriptors);
+  //if count is not a valid number, set 1 as default (since 0 is highly unlikely in the use-case )
+  if(isNaN(count)){
+    return CardEntry.create(1, name, descriptors);
+  }
+
+  var numericCount = parseInt(count);
+  return CardEntry.create(numericCount, name, descriptors);
 }
 
 //Split the content without the bot command into individual pieces and parse them each
