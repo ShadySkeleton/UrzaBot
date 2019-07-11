@@ -58,7 +58,7 @@ var parseLineToCardEntry = function(formattedLine){
   var name = values[1] == null ? '' : values[1].trim();
   var descriptors = values[2] == null ? '' : values[2].trim();
 
-  return CardEntry.create(count, name, descriptors);
+  return CardEntry.create(count, name, '', descriptors);
 }
 
 //reads a completely formatted message and returns the contained card entries as a collection
