@@ -2,9 +2,9 @@
   "name": "UrzaBot",
   "description": "Bot for Magic Related Stuff",
   "version": "0.0.0",
-  "main": "bot.js",
+  "main": "urza.js",
   "scripts": {
-    "start": "node bot.js"
+    "start": "node urza.js"
   },
   "dependencies": {
     "discord.js": "11.1.0",
