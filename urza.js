@@ -5,25 +5,13 @@ const CardEntry = require('./cardEntry')
 const WantsListManager = require('./wantsListManager')
 const UserInputParser = require('./userInputParser')
 const BotFormatter = require('./botFormatter')
+const MessageFetcher = require('./messageFetcher')
 
 const client = new Discord.Client();
 
-//method to find past messages
-var findMessageByAuthor = function(channel, username){
-  var result;
-
-  channel.messages.forEach(function(message){
-      if(message.content.includes(username)){
-        result = message;
-      }
-  });
-
-  return result;
-}
-
 //function delegate that executes a given function on a wants list
 var manageWants = function(channel, username, content, manageFunction){
-  var message = findMessageByAuthor(channel, username);
+  var message = MessageFetcher.findMessageByAuthor(channel, username);
   var hasPriorMessage = message != null;
 
   var updatedCollection = [];
