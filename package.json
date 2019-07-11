@@ -1,7 +1,7 @@
 {
   "name": "UrzaBot",
   "description": "Bot for Magic Related Stuff",
-  "version": "0.0.0",
+  "version": "0.9.0",
   "main": "bot.js",
   "scripts": {
     "start": "node bot.js"
