@@ -2,12 +2,16 @@
   "name": "UrzaBot",
   "description": "Bot for Magic Related Stuff",
   "version": "0.0.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ShadySkeleton/UrzaBot/"
+  },
   "main": "bot.js",
   "scripts": {
     "start": "node bot.js"
   },
   "dependencies": {
-    "discord.js": "11.1.0",
-    "request": "2.81.0"
+    "discord.js": "^11.5.1",
+    "request": "^2.88.0"
   }
 }

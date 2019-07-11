@@ -7,6 +7,4 @@ target
 .settings
 *.code-workspace
 token.json
-*package.json
-package-lock.json
-node_modules/*
+node_modules/
