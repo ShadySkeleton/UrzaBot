@@ -10,8 +10,7 @@ const MessageFetcher = require('./messageFetcher')
 const client = new Discord.Client();
 
 //function delegate that executes a given function on a wants list
-var manageWants = function(channel, username, content, manageFunction){
-  var message = MessageFetcher.findMessageByAuthor(channel, username);
+var handleMessage = function(message, username, content, manageFunction){
   var hasPriorMessage = message != null;
 
   var updatedCollection = [];
@@ -32,6 +31,10 @@ var manageWants = function(channel, username, content, manageFunction){
   } else{
     channel.send(newContent);
   }
+}
+
+var manageWants = function(channel, username, content, manageFunction){
+  var message = MessageFetcher.findHistoricMessage(channel, username, content, manageFunction, handleMessage);
 }
 
 //delegating function to determine actual function that is executed
