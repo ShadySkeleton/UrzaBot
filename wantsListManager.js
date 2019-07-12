@@ -27,6 +27,10 @@ exports.addCardEntry = function(cardCollection, cardEntry){
     var newCountValue = parseInt(cardEntry.count, 10);
     entry.count = oldCountValue + newCountValue;
 
+    if(cardEntry.edition != null && cardEntry.edition.length > 0){
+      entry.edition = cardEntry.edition;
+    }
+
     if(cardEntry.descriptors != null && cardEntry.descriptors.length > 0){
       entry.descriptors = cardEntry.descriptors;
     }

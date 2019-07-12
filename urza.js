@@ -1,5 +1,6 @@
 const Discord = require('discord.js')
 const Config = require('./config.json')
+const Token = require('./token.json')
 const CardEntry = require('./cardEntry')
 const WantsListManager = require('./wantsListManager')
 const UserInputParser = require('./userInputParser')
@@ -44,7 +45,7 @@ var removeWants = function(channel, username, content){
 }
 
 var removeAllWants = function(channel, username){
-  var message = findMessageByAuthor(channel, username);
+  var message = MessageFetcher.findMessageByAuthor(channel, username);
   if(message != null){
     message.delete();
   }
@@ -70,7 +71,7 @@ client.on('message', msg => {
     return;
   }
 
-  var channel = msg.guild.channels.find(channel => channel.id === process.env.channel_id);
+  var channel = msg.guild.channels.find(channel => channel.id === Config.channel_id);
   var authorName = msg.member.displayName;
 
   //channel.bulkDelete(100);
@@ -94,4 +95,4 @@ client.on('message', msg => {
    }
  });
 
-client.login(process.env.Token);
+client.login(Token.tokenId);
