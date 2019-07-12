@@ -1,6 +1,5 @@
 const Discord = require('discord.js')
 const Config = require('./config.json')
-const Token = require('./token.json')
 const CardEntry = require('./cardEntry')
 const WantsListManager = require('./wantsListManager')
 const UserInputParser = require('./userInputParser')
