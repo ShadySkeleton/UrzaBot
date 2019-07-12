@@ -11,3 +11,20 @@ exports.findMessageByAuthor = function(channel, username){
 
   return result;
 }
+
+exports.findHistoricMessage = async function(channel, username, userInput, entryManageFunction, messageHandler){
+  var messagePromise = channel.fetchMessages({limit: 100});
+  var actualMessages = await messagePromise;
+  var foundMessage = false;
+
+  actualMessages.forEach(function(message){
+      if(message.content.includes(username)){
+        messageHandler(channel, message, username, userInput, entryManageFunction);
+        foundMessage = true;
+      }
+  });
+
+  if(!foundMessage){
+    messageHandler(channel, null, username, userInput, entryManageFunction);
+  }
+}

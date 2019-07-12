@@ -10,8 +10,7 @@ const MessageFetcher = require('./messageFetcher')
 const client = new Discord.Client();
 
 //function delegate that executes a given function on a wants list
-var manageWants = function(channel, username, content, manageFunction){
-  var message = MessageFetcher.findMessageByAuthor(channel, username);
+var handleMessage = function(channel, message, username, content, manageFunction){
   var hasPriorMessage = message != null;
 
   var updatedCollection = [];
@@ -34,6 +33,10 @@ var manageWants = function(channel, username, content, manageFunction){
   }
 }
 
+var manageWants = function(channel, username, content, manageFunction){
+  var message = MessageFetcher.findHistoricMessage(channel, username, content, manageFunction, handleMessage);
+}
+
 //delegating function to determine actual function that is executed
 var addWants = function(channel, username, content){
   manageWants(channel, username, content, WantsListManager.addCardEntry);
@@ -45,7 +48,7 @@ var removeWants = function(channel, username, content){
 }
 
 var removeAllWants = function(channel, username){
-  var message = findMessageByAuthor(channel, username);
+  var message = MessageFetcher.findMessageByAuthor(channel, username);
   if(message != null){
     message.delete();
   }
@@ -90,9 +93,9 @@ client.on('message', msg => {
      } else if(contentArray[1] === 'fetch'){
        fetchWantsList(channel, msg.author, content.substring(12));
      }
-   }
 
-   msg.delete();
+    msg.delete();
+   }
  });
 
 client.login(process.env.Token);
