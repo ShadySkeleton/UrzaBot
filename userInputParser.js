@@ -2,7 +2,7 @@ const CardEntry = require('./cardEntry')
 
 var handleShortHand = function(messageLine){
   var value = messageLine.trim();
-  var testChar = messageLine.substring(0,1);
+  var testChar = value.substring(0,1);
   if(isNaN(testChar)){
     return CardEntry.create(1, messageLine, '---', '');
   } else {
