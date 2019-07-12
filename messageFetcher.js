@@ -28,3 +28,31 @@ exports.findHistoricMessage = async function(channel, username, userInput, entry
     messageHandler(channel, null, username, userInput, entryManageFunction);
   }
 }
+
+exports.fetchHistoricMessage = async function(channel, username, recipient){
+  var messagePromise = channel.fetchMessages({limit: 100});
+  var actualMessages = await messagePromise;
+  var foundMessage = false;
+
+  actualMessages.forEach(function(message){
+      if(message.content.includes(username)){
+        recipient.sendMessage(message.content);
+        foundMessage = true;
+      }
+  });
+
+  if(!foundMessage){
+    recipient.sendMessage('Sorry, but there were no wants for user ' + username)
+  }
+}
+
+exports.deleteHistoricMessage = async function(channel, username){
+  var messagePromise = channel.fetchMessages({limit: 100});
+  var actualMessages = await messagePromise;
+
+  actualMessages.forEach(function(message){
+      if(message.content.includes(username)){
+        message.delete();
+      }
+  });
+}

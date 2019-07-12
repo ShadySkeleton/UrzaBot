@@ -47,19 +47,11 @@ var removeWants = function(channel, username, content){
 }
 
 var removeAllWants = function(channel, username){
-  var message = MessageFetcher.findMessageByAuthor(channel, username);
-  if(message != null){
-    message.delete();
-  }
+  MessageFetcher.deleteHistoricMessage(channel, username);
 }
 
 var fetchWantsList = function(channel, author, target){
-  var message = findMessageByAuthor(channel, target);
-  if(message != null){
-    author.sendMessage(message.content);
-  } else {
-    author.sendMessage('Sorry, but there were no wants for user ' + target)
-  }
+  MessageFetcher.fetchHistoricMessage(channel, target, author);
 }
 
 /////////////////////////////////////////////////////////////////
