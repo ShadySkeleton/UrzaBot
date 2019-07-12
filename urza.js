@@ -71,7 +71,7 @@ client.on('message', msg => {
     return;
   }
 
-  var channel = msg.guild.channels.find(channel => channel.id === Config.channel_id);
+  var channel = msg.guild.channels.find(channel => channel.id === process.env.channel_id);
   var authorName = msg.member.displayName;
 
   //channel.bulkDelete(100);
@@ -95,4 +95,4 @@ client.on('message', msg => {
    msg.delete();
  });
 
-client.login(Token.tokenId);
+client.login(process.env.Token);
