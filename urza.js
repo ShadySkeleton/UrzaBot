@@ -10,7 +10,7 @@ const MessageFetcher = require('./messageFetcher')
 const client = new Discord.Client();
 
 //function delegate that executes a given function on a wants list
-var handleMessage = function(message, username, content, manageFunction){
+var handleMessage = function(channel, message, username, content, manageFunction){
   var hasPriorMessage = message != null;
 
   var updatedCollection = [];

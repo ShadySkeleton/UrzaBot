@@ -12,22 +12,19 @@ exports.findMessageByAuthor = function(channel, username){
   return result;
 }
 
-exports.findHistoricMessage = async function(channel, username, message, userInput, entryManageFunction, messageHandler){
+exports.findHistoricMessage = async function(channel, username, userInput, entryManageFunction, messageHandler){
   var messagePromise = channel.fetchMessages({limit: 100});
   var actualMessages = await messagePromise;
   var foundMessage = false;
 
   actualMessages.forEach(function(message){
       if(message.content.includes(username)){
-        console.log("Found a message");
-        messageHandler(message, username, userInput, entryManageFunction);
+        messageHandler(channel, message, username, userInput, entryManageFunction);
         foundMessage = true;
       }
   });
 
   if(!foundMessage){
-    console.log("Executing without prior message");
-    messageHandler(null, username, userInput, entryManageFunction);
+    messageHandler(channel, null, username, userInput, entryManageFunction);
   }
-
 }
